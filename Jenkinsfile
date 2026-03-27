@@ -1,21 +1,16 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:18'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any   // ✅ runs on Jenkins host (Docker available)
 
     environment {
-        IMAGE_NAME = 'nilayp/ci-demo'
-        IMAGE_TAG = 'latest'
+        DOCKER_IMAGE = "nilayp/ci-demo:latest"
+        DOCKER_CREDENTIALS_ID = "dockerhub-creds"
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/nilayp-codes/ci-cd-demo'
             }
         }
 
@@ -27,32 +22,26 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'npm test || echo "No tests found, continuing..."'
+                sh 'npm test'
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                sh 'echo "Build step (skipped or optional)"'
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                sh 'docker build -t $DOCKER_IMAGE .'
             }
         }
 
         stage('Docker Login & Push') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
+                    credentialsId: "${DOCKER_CREDENTIALS_ID}",
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     sh '''
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker push $IMAGE_NAME:$IMAGE_TAG
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push $DOCKER_IMAGE
                     '''
                 }
             }
@@ -61,9 +50,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                    docker stop ci-container || true
-                    docker rm ci-container || true
-                    docker run -d -p 3000:3000 --name ci-container $IMAGE_NAME:$IMAGE_TAG
+                docker stop ci-cd-container || true
+                docker rm ci-cd-container || true
+                docker run -d -p 3000:3000 --name ci-cd-container $DOCKER_IMAGE
                 '''
             }
         }
@@ -71,10 +60,10 @@ pipeline {
 
     post {
         success {
-            echo ' Pipeline executed successfully!'
+            echo '✅ Pipeline SUCCESS!'
         }
         failure {
-            echo ' Pipeline failed. Check logs.'
+            echo '❌ Pipeline FAILED! Check logs.'
         }
     }
 }
