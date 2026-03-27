@@ -2,7 +2,7 @@ pipeline {
     agent any   // ✅ runs on Jenkins host (Docker available)
 
     environment {
-        DOCKER_IMAGE = "nilayp/ci-demo:latest"
+        DOCKER_IMAGE = "nilay03/ci-demo:latest"
         DOCKER_CREDENTIALS_ID = "dockerhub-creds"
     }
 
