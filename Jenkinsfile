@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/nilayp-codes/ci-cd-demo'
+                git branch: 'main', url: 'https://github.com/nilayp-codes/ci-cd-demo'
             }
         }
 
