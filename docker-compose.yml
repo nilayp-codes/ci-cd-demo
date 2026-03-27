@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: jenkins
+    restart: unless-stopped
+    ports:
+      - "8080:8080"    # Web UI
+      - "50000:50000"  # Inbound agent port
+    volumes:
+      - jenkins_home:/var/jenkins_home          # Persistent Jenkins data
+      - /var/run/docker.sock:/var/run/docker.sock  # Docker-in-Docker (DinD)
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    user: root  # Required to access the Docker socket
+
+  app:
+    image: ci-cd-demo:latest
+    container_name: ci-cd-demo-app
+    restart: unless-stopped
+    ports:
+      - "3001:3000"  # Expose app on host port 3001
+    depends_on:
+      - jenkins
+
+volumes:
+  jenkins_home:
+    driver: local

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="3" failures="0" errors="0" time="0.861">
+  <testsuite name="GET /" errors="0" failures="0" skipped="0" timestamp="2026-03-24T18:40:04" time="0.79" tests="3">
+    <testcase classname="GET / returns 200 and correct message and version" name="GET / returns 200 and correct message and version" time="0.028">
+    </testcase>
+    <testcase classname="GET /health returns 200 and status UP" name="GET /health returns 200 and status UP" time="0.004">
+    </testcase>
+    <testcase classname="GET /info returns 200 and has app, node, uptime fields" name="GET /info returns 200 and has app, node, uptime fields" time="0.005">
+    </testcase>
+  </testsuite>
+</testsuites>

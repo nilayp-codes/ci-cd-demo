@@ -1,0 +1,29 @@
+{
+  "name": "ci-cd-demo",
+  "version": "1.0.0",
+  "description": "A demo Node.js/Express app for CI/CD pipeline demonstration",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest --forceExit",
+    "build": "echo 'Build done'"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "supertest": "^7.2.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "reporters": [
+      "default",
+      ["jest-junit", {
+        "outputDirectory": "junit-results",
+        "outputName": "results.xml"
+      }]
+    ]
+  }
+}
